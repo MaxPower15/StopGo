@@ -1,7 +1,8 @@
 # StopGo
 
-Think of a firehose. When the hose is off, no functions can drip out.
-When the hose is on, all the functions spray out as fast as they can.
+Think of a firehose. When the hose's valve is clamped shut, no functions can
+drip out. When the hose's valve is open, all the functions spray out as fast
+as they can.
 
 __You__ provide the functions and __StopGo__ provides the hose and the valve.
 
