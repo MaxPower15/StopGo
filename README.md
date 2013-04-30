@@ -6,10 +6,11 @@ as they can.
 
 __You__ provide the functions and __StopGo__ provides the hose and the valve.
 
-Now imagine multiple hoses and valves, all connected in a series. For 
-the functions to spray out the end, all the valves need to be open.
-Similarly, StopGo functions can be chained naturally via nesting, or 
-explicitly chained with `StopGo.when(...)`.
+Now imagine multiple hoses and valves, all connected in a series. The 
+functions might flow partway through the network, but for the functions to
+spray out the end, all the valves need to be open. Similarly, StopGo
+functions can be chained naturally via nesting, or explicitly chained with
+`StopGo.when(...)`.
 
 You might be thinking, "Hm, this sounds pretty similar to Promises. Why 
 the hell would I use StopGo when there are full-featured Promise 
