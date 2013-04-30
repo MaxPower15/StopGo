@@ -18,11 +18,14 @@ libraries out there?" There are three key differences:
 
 1. StopGo execution can be synchronous. For DOM event bindings that require user interaction, this can be very important.
 2. The state of a StopGo can change from "stop" to "go" infinite times. In contrast, a Promise is designed to permanently remain in its first terminal state.
-3. It's less code, and it will accomplish your most common goals with no problems.
+3. It's less code, and it handles the most useful aspects of promises without requiring deep integration.
 
-That said, this repository also includes the StopGoPromise class to 
-demonstrate that StopGo is very fundamental, and powerful enough 
-to form the base of a Promise API implementation.
+That said, this repository also includes the StopGoPromise class to demonstrate
+that StopGo is very fundamental, and powerful enough to form the base of a
+Promise API implementation.
+
+Let me be clear: the Promise API is awesome and highly useful. But I think 
+StopGo is really cool too, and has its own place in the Javascript world.
 
 
 ## Examples
