@@ -1,17 +1,3 @@
-# The `StopGoPromise` class uses `StopGo` to implement the Promise API.
-#
-# I based the behavior on these descriptions of the Promise API:
-#
-# - https://gist.github.com/domenic/3889970
-# - http://wiki.commonjs.org/wiki/Promises/A
-#
-# I did not implement the progress handler.
-#
-# Caveat: I'm not sure how the behavior of rejection forwarding is 
-# supposed to work, or if it's supposed to happen at all. In this 
-# implementation, if one promise is rejected, all the following promises 
-# are also rejected with the same arguments.
-
 class StopGoPromise
 
 
