@@ -32,25 +32,16 @@ to form the base of a Promise API implementation.
 ### Queue a function:
 
     myObject.ready(myFunction);
-
-or...
-
     myObject.ready.run(myFunction);
 
 ### When ready is true, queued functions will run immediately.
 
     myObject.ready(true);
-
-or...
-
     myObject.ready.go();
 
 ### When ready is false, any new functions will be queued.
 
     myObject.ready(false);
-
-or...
-
     myObject.ready.stop();
 
 ### You can send additional arguments to the queued functions:
