@@ -1,5 +1,6 @@
 describe "StopGo", ->
 
+
   it "can queue functions until go", ->
     stopGo = new StopGo()
     result = ""
@@ -8,6 +9,7 @@ describe "StopGo", ->
     expect(result).toBe("")
     stopGo.go()
     expect(result).toBe("ab")
+
 
   it "can be nested multiple times in itself", ->
     stopGo = new StopGo()
@@ -21,6 +23,7 @@ describe "StopGo", ->
     expect(result).toBe("")
     stopGo.go()
     expect(result).toBe("abc")
+
 
   it "can be stopped from within a nested scope", ->
     stopGo = new StopGo()
@@ -77,6 +80,7 @@ describe "StopGo", ->
     stopGo(true)
     expect(result).toBe("ab")
 
+
   it "can use short-hand syntax to trigger stop", ->
     stopGo = new StopGo()
     result = ""
@@ -91,6 +95,7 @@ describe "StopGo", ->
     expect(result).toBe("ab")
     stopGo(true)
     expect(result).toBe("abc")
+
 
   it "can chain with multiple StopGo instances", ->
     sg1 = new StopGo()
@@ -108,6 +113,7 @@ describe "StopGo", ->
     sg2(true)
     expect(result).toBe("ab")
 
+
   it "can chain with multiple StopGo instances, in reverse", ->
     sg1 = new StopGo()
     sg2 = new StopGo()
@@ -123,6 +129,7 @@ describe "StopGo", ->
     expect(result).toBe("")
     sg1(true)
     expect(result).toBe("ab")
+
 
   it "can use StopGo.when to chain", ->
     sg1 = new StopGo()

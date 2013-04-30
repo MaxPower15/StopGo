@@ -30,8 +30,12 @@ StopGoPromise = (function() {
     return this;
   };
 
+  StopGoPromise.prototype.dependents = function() {
+    return [].concat(this._stopGos).concat([this.finished]);
+  };
+
   StopGoPromise.prototype["continue"] = function(fn) {
-    StopGo.when.apply(StopGo, [].concat(this._stopGos).concat([this.finished])).run(function() {
+    StopGo.when.apply(StopGo, this.dependents()).run(function() {
       var e;
 
       try {
@@ -48,19 +52,33 @@ StopGoPromise = (function() {
   };
 
   StopGoPromise.prototype.then = function(resolvedFn, rejectedFn) {
-    this["continue"](function() {
-      var args, state;
+    var newPromise;
 
-      state = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-      if (state === "resolved") {
-        return typeof resolvedFn === "function" ? resolvedFn.apply(null, args) : void 0;
-      } else if (state === "rejected") {
-        return typeof rejectedFn === "function" ? rejectedFn.apply(null, args) : void 0;
-      } else {
-        throw new Error("Invalid finished state, '" + state + "'. No callbacks ran.");
-      }
-    });
-    return new StopGoPromise(this);
+    if (resolvedFn instanceof StopGoPromise) {
+      resolvedFn.after(this);
+      newPromise = new StopGoPromise(resolvedFn);
+      resolvedFn.then(function() {
+        return newPromise.resolve.apply(newPromise, arguments);
+      }, function() {
+        return newPromise.reject.apply(newPromise, arguments);
+      });
+      return newPromise;
+    } else {
+      newPromise = new StopGoPromise(this);
+      this["continue"](function() {
+        var args, state;
+
+        state = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+        if (state === "resolved") {
+          return newPromise.resolve(typeof resolvedFn === "function" ? resolvedFn.apply(null, args) : void 0);
+        } else if (state === "rejected") {
+          return newPromise.reject(typeof rejectedFn === "function" ? rejectedFn.apply(null, args) : void 0);
+        } else {
+          throw new Error("Invalid finished state, '" + state + "'. No callbacks ran.");
+        }
+      });
+      return newPromise;
+    }
   };
 
   StopGoPromise.prototype.resolve = function() {
