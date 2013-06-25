@@ -86,7 +86,7 @@ Or you could use StopGo.
       hasDataFromY(true);
     });
 
-    StopGo.when(hasDataFromX, hasDataFromY, function() {
+    StopGo.when(hasDataFromX, hasDataFromY).run(function() {
       console.log("Good to go!");
     });
 
