@@ -8,9 +8,9 @@ class StopGo
     @allInOne = => @_allInOne arguments...
     @defineMethodsOn @allInOne
     return @allInOne
-  
 
-  # Utility method to define all this class's methods on an 
+
+  # Utility method to define all this class's methods on an
   # arbitrary obj, while maintaining the proper execution scope.
   defineMethodsOn: (obj) ->
     getType = {}
@@ -24,17 +24,45 @@ class StopGo
   # Try to execute all the functions in the queue.
   flush: (args...) ->
     return this unless @_green
+
     @_lock = true
-    for i in [0...@_queue.length]
-      if fn = @_queue[i]
-        if args.length or !@goArgs
-          fn args...
-        else
-          fn @goArgs...
-        @_queue[i] = null
-      break unless @_green
-    @filter (fn) -> fn?
+    while @_queue.length > 0
+      # pop fn. it's important this happens before fn executes to prevent an
+      # infinite loop if fn calls go() on this queue.
+      fn = @_queue.shift()
+
+      if args.length or !@goArgs
+        fn args...
+      else
+        fn @goArgs...
+
+      # If fn calls stop() on this queue, stop processing.
+      break if @_block or !@_green
     @_lock = false
+
+    this
+
+
+  synchronize: (fns...) ->
+    @synchronizeFn(fn) for fn in fns
+    this
+
+
+  # Allow a method that executes asynchronously to block queue execution
+  # until it is done. The function is passed an argument, the "done"
+  # function, which should be called when the async work is complete.
+  #
+  # @_block is set in addition to stop/go so that, if another function outside
+  # the synchronize loop calls go(), we will still wait for the "done" function
+  # to be called.
+  synchronizeFn: (fn) ->
+    wrapperFn = =>
+      @_block = true
+      @stop()
+      fn =>
+        @_block = false
+        @go()
+    @runFn(wrapperFn)
     this
 
 
@@ -77,9 +105,9 @@ class StopGo
   # 2. Push to the end of the queue and immediately flush.
   # 3. Ignore the queue and execute immediately.
   runFn: (fn) ->
-    if @_green
-      # `@_lock` can be true if `fn` is _called by_ a 
-      # function that is being flushed. In that case, we 
+    if @_green and !@_block
+      # `@_lock` can be true if `fn` is _called by_ a
+      # function that is being flushed. In that case, we
       # just want to execute immediately.
       if @_lock
         fn()
@@ -121,13 +149,15 @@ class StopGo
     if arg?
       if arg instanceof Array
         @run arg...
+      else if typeof arg is 'string'
+        this[arg](rest...)
       else
         @run arguments...
     else
       @_green
 
 
-# `StopGo.when` lets us flatten a bunch of individual stopGos into 
+# `StopGo.when` lets us flatten a bunch of individual stopGos into
 # a single method. It builds a function that looks like:
 #
 #     -> stopGo1 -> stopGo2 -> stopGo3 -> fn()
